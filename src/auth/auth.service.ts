@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../user/user.service';
+import { UserService } from '../features/user/user.service';
 import { OAuth2Client } from 'google-auth-library';
 import { log } from 'console';
 

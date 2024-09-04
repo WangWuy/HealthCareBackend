@@ -2,28 +2,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { FoodsEntity } from 'src/entities/foods.entity';
+import { FoodEntity } from 'src/entities/food.entity';
 
 @Injectable()
 export class FoodsService {
     constructor(
-        @InjectRepository(FoodsEntity)
-        private FoodsRepository: Repository<FoodsEntity>,
+        @InjectRepository(FoodEntity)
+        private FoodsRepository: Repository<FoodEntity>,
     ) {}
 
-    async create(Food: Partial<FoodsEntity>): Promise<FoodsEntity> {
+    async create(Food: Partial<FoodEntity>): Promise<FoodEntity> {
         return this.FoodsRepository.save(Food);
     }
 
-    async findAll(): Promise<FoodsEntity[]> {
+    async findAll(): Promise<FoodEntity[]> {
         return this.FoodsRepository.find();
     }
 
-    async findOne(id: number): Promise<FoodsEntity> {
+    async findOne(id: number): Promise<FoodEntity> {
         return this.FoodsRepository.findOneBy({ id });
     }
 
-    async update(id: number, Food: Partial<FoodsEntity>): Promise<FoodsEntity> {
+    async update(id: number, Food: Partial<FoodEntity>): Promise<FoodEntity> {
         await this.FoodsRepository.update(id, Food);
         return this.FoodsRepository.findOneBy({ id });
     }

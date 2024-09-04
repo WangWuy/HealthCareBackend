@@ -2,8 +2,8 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Logger } fr
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
-import { UserEntity } from '../entities/user.entity';
+import { JwtAuthGuard } from '../../jwt/jwt-auth.guard';
+import { UserEntity } from '../../entities/user.entity';
 import { UserResponseSwagger } from './response/user.response';
 import { GetUserIdFromToken } from 'src/utils/guards/auth.guard';
 

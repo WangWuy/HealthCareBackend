@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { FoodsEntity } from 'src/entities/foods.entity';
+import { FoodEntity } from 'src/entities/food.entity';
 import { FoodsService } from './foods.service';
-import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
+import { JwtAuthGuard } from '../../jwt/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('USER V1')
@@ -11,26 +11,26 @@ import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 export class FoodsController {
     constructor(private readonly FoodsService: FoodsService) { }
 
-    @Post()
-    async create(@Body() createFoodDto: Partial<FoodsEntity>): Promise<FoodsEntity> {
+    @Post('create')
+    async create(@Body() createFoodDto: Partial<FoodEntity>): Promise<FoodEntity> {
         return this.FoodsService.create(createFoodDto);
     }
 
     @Get()
-    async findAll(): Promise<FoodsEntity[]> {
+    async findAll(): Promise<FoodEntity[]> {
         return this.FoodsService.findAll();
     }
 
-    @Get(':id')
-    async findOne(@Param('id') id: number): Promise<FoodsEntity> {
+    @Get('detail/:id')
+    async findOne(@Param('id') id: number): Promise<FoodEntity> {
         return this.FoodsService.findOne(id);
     }
 
-    @Patch(':id')
+    @Post(':id')
     async update(
         @Param('id') id: number,
-        @Body() updateFoodDto: Partial<FoodsEntity>,
-    ): Promise<FoodsEntity> {
+        @Body() updateFoodDto: Partial<FoodEntity>,
+    ): Promise<FoodEntity> {
         return this.FoodsService.update(id, updateFoodDto);
     }
 

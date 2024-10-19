@@ -10,10 +10,13 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-  ) {}
+  ) { }
 
   async findOne(id: number): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+      relations: ['tdees', 'food_logs', 'current_goal'],
+    });
     if (!user) {
       throw new NotFoundException(`User with ID "${id}" not found`);
     }

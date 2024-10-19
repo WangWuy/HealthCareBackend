@@ -46,17 +46,24 @@ export class FoodLogService {
         return this.foodLogRepository.save(foodLog);
     }
 
-    async getDailyFoodLog(userId: number, date: Date) {
-        const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+    async getDailyFoodLog(userId: number, date: Date, mealType?: string) {
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
 
-        return this.foodLogRepository.find({
-            where: {
-                user: { id: userId },
-                logged_at: Between(startOfDay, endOfDay),
-            },
-            relations: ['food'],
-        });
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const queryBuilder = this.foodLogRepository
+            .createQueryBuilder('food_logs')
+            .leftJoinAndSelect('food_logs.food', 'food')
+            .where('food_logs.user_id = :userId', { userId })
+            .andWhere('food_logs.logged_at BETWEEN :startOfDay AND :endOfDay', { startOfDay, endOfDay });
+
+        if (mealType) {
+            queryBuilder.andWhere('food_logs.meal_type = :mealType', { mealType });
+        }
+
+        return queryBuilder.getMany();
     }
 
     async getDailyNutrition(userId: number, date: Date) {
@@ -73,12 +80,16 @@ export class FoodLogService {
             relations: ['current_goal'],
         });
 
-        const latestTdee = await this.tdeeService.getLatestTdee(userId);
+        const recommendation = await this.tdeeService.calculateNutritionRecommendation(userId);
 
         return {
             ...nutrition,
             goal: user.current_goal,
-            tdee: latestTdee,
+            recommendation,
+            remaining_calories: recommendation.total_calories - nutrition.calories,
+            remaining_protein: recommendation.protein - nutrition.protein,
+            remaining_carbs: recommendation.carbs - nutrition.carbs,
+            remaining_fat: recommendation.fat - nutrition.fat,
         };
     }
 

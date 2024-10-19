@@ -3,6 +3,7 @@ import { CommonEntity, STATUS } from './_common.entity';
 import { UserTdeeEntity } from './user-tdee.entity';
 import { FoodLogEntity } from './food-log.entity';
 import { UserGoalEntity } from './user-goal.entity';
+import { WaterIntakeEntity } from './water-intake.entity';
 
 @Entity('users')
 export class UserEntity extends CommonEntity {
@@ -41,4 +42,7 @@ export class UserEntity extends CommonEntity {
 
   @OneToOne(() => UserGoalEntity, userGoal => userGoal.user)
   current_goal: UserGoalEntity;
+
+  @OneToMany(() => WaterIntakeEntity, waterIntake => waterIntake.user)
+  waterIntakes: WaterIntakeEntity[];
 }

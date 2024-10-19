@@ -14,9 +14,12 @@ export class UserTdeeEntity extends CommonEntity {
   @Column({ name: 'user_id' })
   user_id: number;
 
-  @Column('float')
+  @Column('float', { default: 0 })
   tdee: number;
 
-  @Column('float')
+  @Column('float', { default: 0 })
+  adjusted_tdee: number;
+
+  @Column('float', { default: 0 })
   bmr: number; 
 }

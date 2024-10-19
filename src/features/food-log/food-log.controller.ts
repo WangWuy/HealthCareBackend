@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query, UseGuards, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, UseGuards, Param, Delete, BadRequestException } from '@nestjs/common';
 import { FoodLogService } from './food-log.service';
 import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
 
@@ -16,11 +16,21 @@ export class FoodLogController {
     }
 
     @Get('daily/:userId')
-    getDailyFoodLog(
+    async getDailyFoodLog(
         @Param('userId') userId: number,
-        @Query('date') date: string
+        @Query('date') date: string,
+        @Query('meal_type') mealType?: string
     ) {
-        return this.foodLogService.getDailyFoodLog(userId, new Date(date));
+        if (!date) {
+            throw new BadRequestException('Date is required');
+        }
+
+        const parsedDate = new Date(date);
+        if (isNaN(parsedDate.getTime())) {
+            throw new BadRequestException('Invalid date format');
+        }
+
+        return this.foodLogService.getDailyFoodLog(userId, parsedDate, mealType);
     }
 
     @Get('nutrition/:userId')

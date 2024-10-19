@@ -8,6 +8,12 @@ export enum GoalType {
   MAINTAIN_WEIGHT = 3,
 }
 
+export enum RateType {
+  SLOW = 1,
+  MEDIUM = 2,
+  FAST = 3,
+}
+
 export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
@@ -26,7 +32,11 @@ export class UserGoalEntity extends CommonEntity {
   @Column({ name: 'user_id' })
   user_id: number;
 
-  @Column({ type: 'enum', enum: GoalType })
+  @Column({
+    type: 'enum',
+    enum: GoalType,
+    default: GoalType.MAINTAIN_WEIGHT
+  })
   goal_type: GoalType;
 
   @Column({ type: 'enum', enum: Gender })
@@ -38,14 +48,14 @@ export class UserGoalEntity extends CommonEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   start_date: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
-  end_date: Date;
+  @Column({ type: 'float', default: 0 })
+  weight: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', default: 0 })
   target_weight: number;
 
-  @Column()
-  rate: number;
+  @Column({ type: 'enum', enum: GoalType })
+  rate: RateType;
 
   @Column()
   activity_level: number;

@@ -33,6 +33,6 @@ async function bootstrap() {
     credentials: true, // Nếu cần sử dụng cookie hoặc thông tin xác thực
   });
 
-  await app.listen(3000);
+  await app.listen(process.env.SERVER_PORT || 3000);
 }
 bootstrap();

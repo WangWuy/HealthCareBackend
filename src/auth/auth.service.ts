@@ -1,8 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../features/user/user.service';
 import { OAuth2Client } from 'google-auth-library';
-import { log } from 'console';
+import * as bcrypt from 'bcrypt';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,69 @@ export class AuthService {
     private jwtService: JwtService,
   ) {
     this.client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  }
+
+  async register(registerDto: RegisterDto) {
+    const { email, password, first_name, last_name } = registerDto;
+
+    // Kiểm tra email đã tồn tại
+    const existingUser = await this.userService.findByEmail(email);
+    if (existingUser) {
+      throw new ConflictException('Email đã được sử dụng');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Tạo user mới
+    const newUser = await this.userService.create({
+      email,
+      password: hashedPassword,
+      first_name,
+      last_name,
+    });
+
+    // Tạo và trả về token
+    const token = this.jwtService.sign({ email: newUser.email, sub: newUser.id });
+
+    return {
+      access_token: token,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+      }
+    };
+  }
+
+  async localLogin(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    // Tìm user theo email
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Email hoặc mật khẩu không chính xác');
+    }
+
+    // Kiểm tra password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Email hoặc mật khẩu không chính xác');
+    }
+
+    // Tạo và trả về token
+    const token = this.jwtService.sign({ email: user.email, sub: user.id });
+
+    return {
+      access_token: token,
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+      }
+    };
   }
 
   async validateUser(userDetails: any): Promise<any> {

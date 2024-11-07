@@ -1,11 +1,9 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { UserGoalService } from './user-goals.service';
-import { CreateUserGoalDto } from '../../dto/create-user-goal.dto';
 import { GoalType, UserGoalEntity } from '../../entities/user-goal.entity';
 import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
 import { TdeeService } from '../tdee/tdee.service';
-import { ApiOkResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('user-goals')
 @ApiBearerAuth()

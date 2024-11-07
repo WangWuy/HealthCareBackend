@@ -13,6 +13,9 @@ export class UserEntity extends CommonEntity {
   @Column()
   email: string;
 
+  @Column()
+  password: string;
+
   @Column('varchar')
   google_id: string;
 

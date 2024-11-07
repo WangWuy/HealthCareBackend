@@ -17,6 +17,7 @@ export class UserGoalController {
     private tdeeService: TdeeService,
   ) { }
 
+  @ApiOperation({ summary: 'Tạo mục tiêu tập luyện mới cho người dùng' })
   @Post('create/:userId')
   createUserGoal(
     @Param('userId') userId: number,
@@ -25,11 +26,13 @@ export class UserGoalController {
     return this.userGoalService.createUserGoal(userId, userGoalData);
   }
 
+  @ApiOperation({ summary: 'Xem chi tiết mục tiêu tập luyện của người dùng' })
   @Get('detail/:userId')
   getUserGoal(@Param('userId') userId: number) {
     return this.userGoalService.getUserGoal(userId);
   }
 
+  @ApiOperation({ summary: 'Cập nhật mục tiêu tập luyện của người dùng' })
   @Put(':userId')
   updateUserGoal(
     @Param('userId') userId: number,
@@ -38,6 +41,7 @@ export class UserGoalController {
     return this.userGoalService.updateUserGoal(userId, userGoalData);
   }
 
+  @ApiOperation({ summary: 'Lấy khuyến nghị lượng calo cần nạp dựa trên mục tiêu và TDEE' })
   @Get('recommendations/:userId')
   async getRecommendations(@Param('userId') userId: number) {
     const userGoal = await this.userGoalService.getUserGoal(userId);
@@ -46,13 +50,13 @@ export class UserGoalController {
     let recommendation = '';
     switch (userGoal.goal_type) {
       case GoalType.LOSE_WEIGHT:
-        recommendation = `To lose weight, aim for a daily calorie intake of ${tdee - 250} calories.`;
+        recommendation = `Để giảm cân, bạn nên nạp ${tdee - 250} calo mỗi ngày.`;
         break;
       case GoalType.GAIN_WEIGHT:
-        recommendation = `To gain weight, aim for a daily calorie intake of ${tdee + 250} calories.`;
+        recommendation = `Để tăng cân, bạn nên nạp ${tdee + 250} calo mỗi ngày.`;
         break;
       case GoalType.MAINTAIN_WEIGHT:
-        recommendation = `To maintain your weight, aim for a daily calorie intake of ${tdee} calories.`;
+        recommendation = `Để duy trì cân nặng, bạn nên nạp ${tdee} calo mỗi ngày.`;
         break;
     }
 

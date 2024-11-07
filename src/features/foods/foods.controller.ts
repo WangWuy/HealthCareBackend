@@ -33,11 +33,13 @@ export class FoodsController {
         return this.foodRepository.findAll(query);
     }
 
+    @ApiOperation({ summary: 'Lấy chi tiết món ăn' })
     @Get('detail/:id')
     async findOne(@Param('id') id: number): Promise<FoodEntity> {
         return this.foodRepository.findOne(id);
     }
 
+    @ApiOperation({ summary: 'Cập nhật món ăn' })
     @Post(':id')
     async update(
         @Param('id') id: number,
@@ -46,6 +48,7 @@ export class FoodsController {
         return this.foodRepository.update(id, updateFoodDto);
     }
 
+    @ApiOperation({ summary: 'Xóa món ăn' })
     @Delete(':id')
     async remove(@Param('id') id: number): Promise<void> {
         return this.foodRepository.remove(id);

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GoalType, UserGoalEntity } from '../../entities/user-goal.entity';
-import { CreateUserGoalDto } from './dto/create-user-goal.dto';
+import { CreateUserGoalDto } from '../../dto/create-user-goal.dto';
 import { UserEntity } from 'src/entities/user.entity';
 import { TdeeService } from '../tdee/tdee.service';
 

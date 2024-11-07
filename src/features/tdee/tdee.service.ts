@@ -5,6 +5,7 @@ import { UserTdeeEntity } from 'src/entities/user-tdee.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { MealDistribution, NutritionRecommendation } from 'src/interfaces/nutrition.interface';
 import { Repository } from 'typeorm';
+import { NutritionRecommendationDto, TdeeResponseDto, MealDistributionDto } from 'src/dto/tdee-response.dto';
 
 @Injectable()
 export class TdeeService {
@@ -57,7 +58,7 @@ export class TdeeService {
     return this.calculateAndSaveTdee(user, user.current_goal);
   }
 
-  async calculateNutritionRecommendation(userId: number): Promise<NutritionRecommendation> {
+  async calculateNutritionRecommendation(userId: number): Promise<NutritionRecommendationDto> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['current_goal'],
@@ -91,7 +92,7 @@ export class TdeeService {
     };
   }
 
-  async getUserTdeeAndRecommendation(userId: number): Promise<{ tdee: number; recommendation: NutritionRecommendation }> {
+  async getUserTdeeAndRecommendation(userId: number): Promise<TdeeResponseDto> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['current_goal'],
@@ -101,19 +102,18 @@ export class TdeeService {
       throw new NotFoundException('User or user goal not found');
     }
 
-    const latestTdee = await this.getLatestTdee(userId);
-    if (!latestTdee) {
+    let tdee = await this.getLatestTdee(userId);
+    if (!tdee) {
       // Nếu không có TDEE, tính toán mới
-      const { tdee } = await this.recalculateAndSaveTdee(userId);
-      const recommendation = await this.calculateNutritionRecommendation(userId);
-      return { tdee, recommendation };
+      const result = await this.recalculateAndSaveTdee(userId);
+      tdee = result.tdee;
     }
 
     const recommendation = await this.calculateNutritionRecommendation(userId);
-    return { tdee: latestTdee, recommendation };
+    return { tdee, recommendation };
   }
 
-  private calculateMealDistribution(total_calories: number): MealDistribution {
+  private calculateMealDistribution(total_calories: number): MealDistributionDto {
     return {
       breakfast: Math.round(total_calories * 0.3),
       lunch: Math.round(total_calories * 0.35),

@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../jwt/jwt-auth.guard';
 import { UserEntity } from '../../entities/user.entity';
-import { UserResponseSwagger } from './response/user.response';
+import { UserResponseSwagger } from '../../response/user.response';
 import { GetUserIdFromToken } from 'src/utils/guards/auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -24,7 +24,7 @@ export class UserController {
     return await this.userService.findAll();
   }
 
-  @ApiOperation({ summary: 'Thong tin người dùng' })
+  @ApiOperation({ summary: 'Thông tin người dùng' })
   @ApiOkResponse({
     type: UserResponseSwagger,
   })
@@ -33,22 +33,21 @@ export class UserController {
     return this.userService.findOne(userId);
   }
 
+  @ApiOperation({ summary: 'Tạo người dùng mới' })
   @Post()
   async create(@Body() createUserDto: Partial<UserEntity>): Promise<UserEntity> {
     return this.userService.create(createUserDto);
   }
 
+  @ApiOperation({ summary: 'Cập nhật người dùng' })
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: Partial<UserEntity>): Promise<UserEntity> {
     return this.userService.update(+id, updateUserDto);
   }
 
+  @ApiOperation({ summary: 'Xóa người dùng' })
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
     return this.userService.remove(+id);
   }
-}
-
-function UsePrefix(arg0: string): (target: typeof UserController) => void | typeof UserController {
-  throw new Error('Function not implemented.');
 }

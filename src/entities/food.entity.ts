@@ -16,32 +16,34 @@ export class FoodEntity extends CommonEntity {
     avatar: string;
 
     @Column('float', {
-        default: '0',
+        default: 0,
     })
     calories: number;
 
     @Column('float', {
-        default: '0',
+        default: 0,
     })
     protein: number;
 
     @Column('float', {
-        default: '0',
+        default: 0,
     })
     carbs: number;
 
     @Column('float', {
-        default: '0',
+        default: 0,
     })
     fat: number;
 
-    @Column('int', {
-        default: '0',
+    @Column({
+        type: 'enum',
+        enum: TYPE_FOOD,
+        default: TYPE_FOOD.ADMIN_FOOD,
     })
-    food_type: TYPE_FOOD.ADMIN_FOOD;
+    food_type: TYPE_FOOD; 
 
-    @Column({ default: true })
-    status: STATUS.ACTIVE;
+    @Column({ default: STATUS.ACTIVE })
+    status: STATUS;
     
     @ManyToOne(() => UserEntity, { nullable: true })
     @JoinColumn({ name: 'create_by_id' })
